@@ -1,0 +1,31 @@
+using Proyecto_de_aula;
+using System;
+using System.Collections.Generic;
+using static System.Console;
+using static System.Convert;
+
+namespace Proyecto_de_aula
+{
+  class Usuario
+  {
+    public string Nombre;
+    public LinkedList<string> Intereses;
+
+    public Usuario(string nombre)
+    {
+      Nombre = nombre;
+      Intereses = new LinkedList<string>();
+    }
+    public void agregarIntereses(string intereses){
+      Intereses.AddLast(intereses);
+      }
+    public void mostrarIntereses()
+    {
+      WriteLine($"Intereses de {Nombre}: ");
+      foreach(string intereses in Intereses)
+      {
+        WriteLine(intereses + " ");
+        }
+      }
+    }
+    
