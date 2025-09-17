@@ -25,7 +25,34 @@ namespace Proyecto_de_aula
       foreach(string intereses in Intereses)
       {
         WriteLine(intereses + " ");
+            }
         }
-      }
     }
+
+class Program
+{
+  static void Main()
+{
+  List<string> listaIntereses = new List<string>()
+{
+  "Música",
+  "Deporte",
+  "Libros",
+  "Películas",
+  "Lugares",
+  "Tecnología",
+  "Arte"
+};
+  WriteLine("Ingrese su nombre de usuario");
+  string nombre = ReadLine();
+  Usuario user = new Usuario(nombre);
+
+  WriteLine("Elige tus intereses favoritos");
+  for (int i = 0; i < listaIntereses.Count; i++)
+{
+    WriteLine($"{i+1}.{listaIntereses[i]}");
+}
+  
+
+
     
