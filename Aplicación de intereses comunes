@@ -52,6 +52,26 @@ class Program
 {
     WriteLine($"{i+1}.{listaIntereses[i]}");
 }
+while(true)
+{
+  WriteLine("Ingrese un número o 0 para salir");
+  int opcion = ToInt32(ReadLine());
+
+  if (opcion==0)
+    break;
+  if (opcion > 0 && opcion <= listaIntereses.Count)
+{
+    string interesesSeleccionado = listaIntereses[opcion-1];
+    user.agregarIntereses(interesesSeleccionado);
+    WriteLine($"Interes agregado: {listaIntereses}")
+}
+else
+{
+    WriteLine("Número invalido. Inténtalo de nuevo");
+}
+
+
+
   
 
 
