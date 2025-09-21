@@ -39,9 +39,20 @@ class Program
   "Deporte",
   "Libros",
   "Películas",
+  "Series",
   "Lugares",
   "Tecnología",
-  "Arte"
+  "Arte",
+  "Comida",
+  "Paises",
+  "Idiomas",
+  "Fotografia",
+  "Videojuegos",
+  "Moda",
+  "Manualidades",
+  "Escritura",
+  "Historia",
+  "Musica",
 };
   WriteLine("Ingrese su nombre de usuario");
   string nombre = ReadLine();
