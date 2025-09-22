@@ -6,7 +6,7 @@ using static System.Convert;
 
 namespace Proyecto_de_aula
 {
-  class Usuario
+  public class Usuario
   {
     public string Nombre;
     public LinkedList<string> Intereses;
@@ -25,9 +25,9 @@ namespace Proyecto_de_aula
       foreach(string intereses in Intereses)
       {
         WriteLine(intereses + " ");
-            }
-        }
+      }
     }
+}
 
 class Program
 {
@@ -71,11 +71,16 @@ while(true)
 {
     string interesesSeleccionado = listaIntereses[opcion-1];
     user.agregarIntereses(interesesSeleccionado);
-    WriteLine($"Interes agregado: {listaIntereses}")
+    WriteLine($"Interes agregado: {interesesSeleccionado}");
 }
 else
 {
     WriteLine("Número invalido. Inténtalo de nuevo");
+}
+}
+user.mostrarIntereses();
+}
+}
 }
 
 
