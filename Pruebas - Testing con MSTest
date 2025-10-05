@@ -1,0 +1,23 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Proyecto_de_aula;
+
+namespace Prueba_de_proyecto
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        [TestMethod]
+        public void AgregarIntereses()
+        {
+            Usuario user = new Usuario("Gabriela");
+            user.agregarIntereses("Música");
+            CollectionAssert.Contains(new System.Collections.Generic.List<string>(user.Intereses), "Música");
+        }
+        [TestMethod]
+        public void CrearUsuario()
+        {
+            Usuario user = new Usuario("Ana");
+            Assert.AreEqual("Ana", user.Nombre);
+        }
+    }
+}
