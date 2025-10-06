@@ -10,7 +10,7 @@ namespace Prueba_de_proyecto
         public void AgregarIntereses()
         {
             Usuario user = new Usuario("Gabriela");
-            user.agregarIntereses("Música");
+            user.AgregarIntereses("Música");
             CollectionAssert.Contains(new System.Collections.Generic.List<string>(user.Intereses), "Música");
         }
         [TestMethod]
@@ -18,6 +18,21 @@ namespace Prueba_de_proyecto
         {
             Usuario user = new Usuario("Ana");
             Assert.AreEqual("Ana", user.Nombre);
+        }
+        [TestMethod]
+        public void NoDuplicado_Excepcion()
+        {
+            Usuario user = new Usuario("Pedro");
+            user.AgregarIntereses("Deporte");
+
+            Assert.ThrowsException<InvalidOperationException>(() => user.AgregarIntereses("Deporte"));
+        }
+        [TestMethod]
+        public void NoAgregarVacios_Excepcion()
+        {
+            Usuario user = new Usuario("Laura");
+            Assert.ThrowsException<ArgumentException>(() => user.AgregarIntereses(""));
+            Assert.ThrowsException<ArgumentException>(() => user.AgregarIntereses("   "));
         }
     }
 }
