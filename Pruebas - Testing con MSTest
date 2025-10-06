@@ -6,6 +6,7 @@ namespace Prueba_de_proyecto
     [TestClass]
     public class UnitTest1
     {
+        //Verificación de que se pueda agregar un interés válido a un usuario y que si quede en la lista de intereses
         [TestMethod]
         public void AgregarIntereses()
         {
@@ -13,12 +14,14 @@ namespace Prueba_de_proyecto
             user.AgregarIntereses("Música");
             CollectionAssert.Contains(new System.Collections.Generic.List<string>(user.Intereses), "Música");
         }
+        //Verificación de que al crear el usuario el nombre quede correctamente ingresado
         [TestMethod]
         public void CrearUsuario()
         {
             Usuario user = new Usuario("Ana");
             Assert.AreEqual("Ana", user.Nombre);
         }
+        //Verificación de que no se agreguen intereses duplicados
         [TestMethod]
         public void NoDuplicado_Excepcion()
         {
@@ -27,6 +30,7 @@ namespace Prueba_de_proyecto
 
             Assert.ThrowsException<InvalidOperationException>(() => user.AgregarIntereses("Deporte"));
         }
+        //Verificación de que no se agreguen intereses vacíos o en blanco
         [TestMethod]
         public void NoAgregarVacios_Excepcion()
         {
