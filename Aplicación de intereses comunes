@@ -8,23 +8,40 @@ namespace Proyecto_de_aula
 {
   public class Usuario
   {
-    public string Nombre;
-    public LinkedList<string> Intereses;
+    public string Nombre { get; set; }
+    public LinkedList<string> Intereses { get; private set; }
 
+    //complejidad O(1)
     public Usuario(string nombre)
     {
       Nombre = nombre;
       Intereses = new LinkedList<string>();
     }
-    public void agregarIntereses(string intereses){
-      Intereses.AddLast(intereses);
-      }
-    public void mostrarIntereses()
+    //complejidad O(n)
+    //Se agrega un interés al usuario si no está repetido ni vacio
+    public void AgregarIntereses(string interes)
+    {
+      if (string.IsNullOrWhiteSpace(interes))
+        throw new ArgumentException("No se puede agregar un interés vacío");
+
+      if (Intereses.Contains(interes)) //O(n)
+        throw new InvalidOperationException($"El interes {interes} ya se encuentra agregado en la lista");
+     
+      Intereses.AddLast(interes); //O(1)
+    }
+    //complejidad O(n)
+    //Muestra los intereses del usuario
+    public void MostrarIntereses()
     {
       WriteLine($"Intereses de {Nombre}: ");
-      foreach(string intereses in Intereses)
+      if (Intereses.Count == 0)
       {
-        WriteLine(intereses + " ");
+          WriteLine("No tiene intereses seleccionados");
+          return;
+      }
+      foreach(string interes in Intereses)
+      {
+        WriteLine(interes + " ");
       }
     }
 }
@@ -51,8 +68,10 @@ class Program
   "Moda",
   "Historia",
 };
+  WriteLine("Bienvenid@ al sistema de intereses comunes");
   WriteLine("Ingrese su nombre de usuario");
   string nombre = ReadLine();
+  
   Usuario user = new Usuario(nombre);
 
   WriteLine("Elige tus intereses favoritos");
@@ -70,15 +89,22 @@ while(true)
   if (opcion > 0 && opcion <= listaIntereses.Count)
 {
     string interesesSeleccionado = listaIntereses[opcion-1];
-    user.agregarIntereses(interesesSeleccionado);
+    try
+    {
+    user.AgregarIntereses(interesesSeleccionado);
     WriteLine($"Interes agregado: {interesesSeleccionado}");
+    }
+    catch (Exception ex)
+    {
+        WriteLine(ex.Message);
+    }
 }
 else
 {
     WriteLine("Número invalido. Inténtalo de nuevo");
 }
 }
-user.mostrarIntereses();
+user.MostrarIntereses();
 }
 }
 }
