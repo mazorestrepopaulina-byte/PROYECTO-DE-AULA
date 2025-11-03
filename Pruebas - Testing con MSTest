@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Proyecto_de_aula;
+using Proyecto_Estructura;
+using System;
 
 namespace Prueba_de_proyecto
 {
@@ -39,4 +40,33 @@ namespace Prueba_de_proyecto
             Assert.ThrowsException<ArgumentException>(() => user.AgregarIntereses("   "));
         }
     }
-}
+
+    [TestClass]
+    public class UsuarioTests
+    {
+        [TestMethod]
+        public void AgregarInteresValido()
+        {
+            Usuario user = new Usuario("Gabriela");
+            user.AgregarIntereses("Música");
+            Assert.IsTrue(user.Intereses.Contains("Música"));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void AgregarInteresVacio()
+        {
+            Usuario user = new Usuario("Lola");
+            user.AgregarIntereses("");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void AgregarInteresRepetido()
+        {
+            Usuario user = new Usuario("Carlos");
+            user.AgregarIntereses("Arte");
+            user.AgregarIntereses("Arte");
+        }
+    }
+
