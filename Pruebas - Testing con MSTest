@@ -5,55 +5,20 @@ using System;
 namespace Prueba_de_proyecto
 {
     [TestClass]
-    public class UnitTest1
-    {
-        //Verificación de que se pueda agregar un interés válido a un usuario y que si quede en la lista de intereses
-        [TestMethod]
-        public void AgregarIntereses()
-        {
-            Usuario user = new Usuario("Gabriela");
-            user.AgregarIntereses("Música");
-            CollectionAssert.Contains(new System.Collections.Generic.List<string>(user.Intereses), "Música");
-        }
-        //Verificación de que al crear el usuario el nombre quede correctamente ingresado
-        [TestMethod]
-        public void CrearUsuario()
-        {
-            Usuario user = new Usuario("Ana");
-            Assert.AreEqual("Ana", user.Nombre);
-        }
-        //Verificación de que no se agreguen intereses duplicados
-        [TestMethod]
-        public void NoDuplicado_Excepcion()
-        {
-            Usuario user = new Usuario("Pedro");
-            user.AgregarIntereses("Deporte");
-
-            Assert.ThrowsException<InvalidOperationException>(() => user.AgregarIntereses("Deporte"));
-        }
-        //Verificación de que no se agreguen intereses vacíos o en blanco
-        [TestMethod]
-        public void NoAgregarVacios_Excepcion()
-        {
-            Usuario user = new Usuario("Laura");
-            Assert.ThrowsException<ArgumentException>(() => user.AgregarIntereses(""));
-            Assert.ThrowsException<ArgumentException>(() => user.AgregarIntereses("   "));
-        }
-    }
-
-    [TestClass]
     public class UsuarioTests
     {
         [TestMethod]
-        public void AgregarInteresValido()
+        //Aqui se verifica que un interés se agrega correctamente al usuario
+        public void AgregarIntereses()
         {
             Usuario user = new Usuario("Gabriela");
             user.AgregarIntereses("Música");
             Assert.IsTrue(user.Intereses.Contains("Música"));
         }
-
+        
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
+        //Se verifica que no se agregue un interés vacío o en blanco
         public void AgregarInteresVacio()
         {
             Usuario user = new Usuario("Lola");
@@ -62,11 +27,83 @@ namespace Prueba_de_proyecto
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
+        //No se permite agregar intereses repetidos
+
         public void AgregarInteresRepetido()
         {
             Usuario user = new Usuario("Carlos");
             user.AgregarIntereses("Arte");
             user.AgregarIntereses("Arte");
         }
-    }
+        [TestMethod]
+        public void CrearUsuario()
+        {
+            Usuario user = new Usuario("Ana");
+            Assert.AreEqual("Ana", user.Nombre);
+        }
+        
+        [TestMethod]
+        public void NoDuplicadoExcepcion()
+        {
+            Usuario user = new Usuario("Pedro");
+            user.AgregarIntereses("Deporte");
 
+            Assert.ThrowsException<InvalidOperationException>(() => user.AgregarIntereses("Deporte"));
+        }
+
+        [TestMethod]
+        public void NoAgregarVaciosExcepcion()
+        {
+            Usuario user = new Usuario("Laura");
+            Assert.ThrowsException<ArgumentException>(() => user.AgregarIntereses(""));
+            Assert.ThrowsException<ArgumentException>(() => user.AgregarIntereses("   "));
+        }
+}   
+
+    [TestClass]
+    public class GrafosTests
+    {
+        [TestMethod]
+        public void GenerarConexiones()
+        {
+            var grafo = new GrafosUsuarios();
+
+            var violeta = new Usuario("Violeta");
+            violeta.AgregarIntereses("Música");
+            violeta.AgregarIntereses("Películas");
+
+            var marta = new Usuario("Marta");
+            marta.AgregarIntereses("Música");
+            marta.AgregarIntereses("Deporte");
+
+            grafo.AgregarUsuario(violeta);
+            grafo.AgregarUsuario(marta);
+
+            grafo.GenerarConexiones();
+
+            Assert.IsTrue(grafo.ObtenerConexiones(0).Contains(1));
+            Assert.IsTrue(grafo.ObtenerConexiones(1).Contains(0));
+        }
+
+        [TestMethod]
+        public void BFS()
+        {
+            var grafo = new GrafosUsuarios();
+            var violeta = new Usuario("Violeta");
+            var ana = new Usuario("Ana");
+            var marta = new Usuario("Marta");
+
+            violeta.AgregarIntereses("Música");
+            ana.AgregarIntereses("Música");
+            marta.AgregarIntereses("Música");
+
+            grafo.AgregarUsuario(violeta);
+            grafo.AgregarUsuario(ana);
+            grafo.AgregarUsuario(marta);
+            grafo.GenerarConexiones();
+
+            var visitados = grafo.BFS_Test(0);
+            Assert.AreEqual(3, visitados.Count);
+        }
+    }
+}
