@@ -5,80 +5,80 @@ using static System.Convert;
 
 namespace Proyecto_Estructura
 {
-  public class Usuario
-  {
-    public string Nombre { get; set; }
-    public LinkedList<string> Intereses { get; private set; }
 
-    //complejidad O(1)
-    public Usuario(string nombre)
+    public class Usuario
     {
-      if (string.IsNullOrWhiteSpace(nombre))
-        throw new ArgumentException("El nombre no debe estar vacío");
+        public string Nombre { get; set; }
+        public LinkedList<string> Intereses { get; private set; }
 
-      Nombre = nombre;
-      Intereses = new LinkedList<string>();
-    }
-
-    //complejidad O(n)
-    //Se agrega un interés al usuario si no está repetido ni vacio
-    public void AgregarIntereses(string interes)
-    {
-      if (string.IsNullOrWhiteSpace(interes))
-        throw new ArgumentException("No se puede agregar un interés vacío");
-
-      if (Intereses.Contains(interes)) //O(n)
-        throw new InvalidOperationException($"El interes {interes} ya se encuentra agregado en la lista");
-     
-      Intereses.AddLast(interes); //O(1)
-    }
-
-//Recursión que muestra los intereses del usuario
-//complejidad O(n)
-private void MostrarInteresesRecursivo(LinkedListNode<string> nodo)
-{
-    if (nodo == null)
-        return;
-    WriteLine($"- {nodo.Value}");
-
-    MostrarInteresesRecursivo(nodo.Next);
-
-}
-
-/*Recursión que cuenta los intereses del usuario
-complejidad O(n)*/
-private int ContarInteresesRecursivo(LinkedListNode<string> nodo)
-{
-    if (nodo == null)
-        return 0;
-    return ContarInteresesRecursivo(nodo.Next) + 1;
-}
-
-//complejidad O(n)
-//Muestra los intereses del usuario y el total de intereses
-    public void MostrarIntereses()
-    {
-        WriteLine($"\nIntereses de {Nombre}: ");
-        if (Intereses.Count == 0)
+        //complejidad O(1)
+        public Usuario(string nombre)
         {
-            WriteLine("No tiene intereses seleccionados");
-            return;
+            if (string.IsNullOrWhiteSpace(nombre))
+                throw new ArgumentException("El nombre no debe estar vacío");
+
+            Nombre = nombre;
+            Intereses = new LinkedList<string>();
         }
-        MostrarInteresesRecursivo(Intereses.First);
-        int total = ContarInteresesRecursivo(Intereses.First);
-        WriteLine($"\nTotal de intereses seleccionados por {Nombre}: {total}");
+        //complejidad O(n)
+        //Se agrega un interés al usuario si no está repetido ni vacio
+        public void AgregarIntereses(string interes)
+        {
+            if (string.IsNullOrWhiteSpace(interes))
+                throw new ArgumentException("No se puede agregar un interés vacío");
 
+            if (Intereses.Contains(interes)) //O(n)
+                throw new InvalidOperationException($"El interes {interes} ya se encuentra agregado en la lista");
+
+            Intereses.AddLast(interes); //O(1)
+        }
+
+        //Recursión que muestra los intereses del usuario
+        //complejidad O(n)
+        private void MostrarInteresesRecursivo(LinkedListNode<string> nodo)
+        {
+            if (nodo == null)
+                return;
+            WriteLine($"- {nodo.Value}");
+
+            MostrarInteresesRecursivo(nodo.Next);
+
+        }
+
+        /*Recursión que cuenta los intereses del usuario
+        complejidad O(n)*/
+        private int ContarInteresesRecursivo(LinkedListNode<string> nodo)
+        {
+            if (nodo == null)
+                return 0;
+            return ContarInteresesRecursivo(nodo.Next) + 1;
+        }
+
+
+        //complejidad O(n)
+        //Muestra los intereses del usuario y el total de intereses
+        public void MostrarIntereses()
+        {
+            WriteLine($"\nIntereses de {Nombre}: ");
+            if (Intereses.Count == 0)
+            {
+                WriteLine("No tiene intereses seleccionados");
+                return;
+            }
+            MostrarInteresesRecursivo(Intereses.First);
+            int total = ContarInteresesRecursivo(Intereses.First);
+            WriteLine($"\nTotal de intereses seleccionados por {Nombre}: {total}");
+
+        }
     }
-}
+    public class GrafosUsuarios
+    {
+        private List<List<int>> adyacencia;
+        private List<Usuario> usuarios;
 
-public class GrafosUsuarios
-{
-    private List<List<int>> adyacencia;
-    private List<Usuario> usuarios;
-     
-    /* Se inicializa el grafo vacío
-    * complejidad O(1) */
 
+        /* Se inicializa el grafo vacío
+         * complejidad O(1) */
         public GrafosUsuarios()
         {
             usuarios = new List<Usuario>();
@@ -96,12 +96,15 @@ public class GrafosUsuarios
                     WriteLine($"\n El usuario '{usuar.Nombre}' ya existe");
                     return; // sale del método sin agregar
                 }
+
             }
 
             usuarios.Add(usuar);
             adyacencia.Add(new List<int>());
             WriteLine($"\nUsuario '{usuar.Nombre}' agregado correctamente");
         }
+        
+
 
         /* Genera conexiones entre usuarios que tienen intereses comunes
          * complejidad O(n^2 * m) */
@@ -115,11 +118,15 @@ public class GrafosUsuarios
                     {
                         if (usuarios[j].Intereses.Contains(intereses))
                         {
+                            if (adyacencia[i].Contains(j))
+                                throw new Exception($"Ya existe conexión entre {usuarios[i].Nombre} y {usuarios[j].Nombre}.");
+
                             adyacencia[i].Add(j);
                             adyacencia[j].Add(i);
                             WriteLine($"Conexión creada entre {usuarios[i].Nombre} y {usuarios[j].Nombre} por interés en común '{intereses}'");
+                            break;
                         }
-
+                        
                     }
                 }
             }
@@ -144,6 +151,7 @@ public class GrafosUsuarios
                     DFS(j, visitados);
             }
         }
+
         /*Recorre el grafo con BFS
          * complejidad: O(V+E) */
         public void BFS(int i)
@@ -171,6 +179,7 @@ public class GrafosUsuarios
             
         }
 
+
         /* Muestras las conexiones del grafo
          * complejidad O(n^2) */
 
@@ -188,87 +197,97 @@ public class GrafosUsuarios
         public int CantidadUsuarios => usuarios.Count;
     }
 
-class Program
+    class Program
+    {
+        static void Main()
+        {
+            List<string> listaIntereses = new List<string>()
 {
-  static void Main()
-{
-  List<string> listaIntereses = new List<string>()
-{
-   "Música","Deporte","Libros","Películas","Series","Lugares","Tecnología",
- "Arte","Comida","Paises","Idiomas","Fotografia","Videojuegos","Moda","Historia",
+  "Música","Deporte","Libros","Películas","Series","Lugares","Tecnología",
+  "Arte","Comida","Paises","Idiomas","Fotografia","Videojuegos","Moda","Historia",
 };
-  WriteLine("Bienvenid@ al sistema de intereses comunes");
-  GrafosUsuarios grafo = new GrafosUsuarios();
+            WriteLine("Bienvenid@ al sistema de intereses comunes");
+            GrafosUsuarios grafo = new GrafosUsuarios();
 
-  while(true)
-{
-  WriteLine("Ingrese su nombre de usuario");
-  string nombre = ReadLine();
-  if (nombre.ToLower() == "*") break;
-  
-  Usuario user;
-  try{
-    user = new Usuario(nombre);
-  }
-  catch (Exception ex)
-  { Console.WriteLine($"Intente de nuevo {ex.Message}");
-    continue;
-  }
-  WriteLine("Elige tus intereses favoritos");
-  for (int i = 0; i < listaIntereses.Count; i++)
-{
-    WriteLine($"{i+1}.{listaIntereses[i]}");
-}
-while(true)
-{
-    WriteLine("Ingrese un número o 0 para salir");
-    int opcion;
-    try{
-      opcion = ToInt32(ReadLine());
-    }
-    catch
-    {
-        WriteLine("Debes ingresar un número");
-        continue;
-    }
+            while (true)
+            {
+                WriteLine("\nIngrese nombre de usuario o * para salir: ");
+                string nombre = ReadLine();
+                if (nombre.ToLower() == "*") break;
 
-  if (opcion==0) break;
-  if (opcion > 0 && opcion <= listaIntereses.Count)
-{
-    string interesesSeleccionado = listaIntereses[opcion-1];
-    try
-    {
-    user.AgregarIntereses(interesesSeleccionado);
-    WriteLine($"Interes agregado: {interesesSeleccionado}");
-    }
-    catch (Exception ex)
-    {
-        WriteLine(ex.Message);
-    }
-}
-else
-{
-    WriteLine("Número invalido. Inténtalo de nuevo");
-    }
-    grafo.AgregarUsuario(user);
-}
-if (grafo.CantidadUsuarios > 1)
-{
-    grafo.GenerarConexiones();
-    grafo.MostrarGrafos();
+                Usuario user;
 
-    WriteLine("\nDFS");
-    grafo.DFS(0);
+                try
+                {
+                    user = new Usuario(nombre);
+                }
+                catch (Exception ex)
+                { Console.WriteLine($"Intente de nuevo {ex.Message}");
+                    continue;
+                }
 
-    WriteLine("\nBFS");
-    grafo.BFS(0);
+                    WriteLine("\nElige tus intereses favoritos");
+                for (int i = 0; i < listaIntereses.Count; i++)
+                {
+                    WriteLine($"{i + 1}.{listaIntereses[i]}");
+                }
+                while (true)
+                {
+                    WriteLine("\nIngrese un número o 0 para salir");
+                    int opcion;
+                    try
+                    {
+                         opcion = ToInt32(ReadLine());
+                    }
+                    catch
+                    {
+                        WriteLine("Debes ingresar un número");
+                        continue;
+                    
+                    }
+
+                    if (opcion == 0) break;
+                    if (opcion > 0 && opcion <= listaIntereses.Count)
+                    {
+                        string interesesSeleccionado = listaIntereses[opcion - 1];
+                        try
+                        {
+                            user.AgregarIntereses(interesesSeleccionado);
+                            WriteLine($"Interes agregado: {interesesSeleccionado}");
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteLine(ex.Message);
+                        }
+                    }
+                    else
+                        WriteLine("Número invalido. Inténtalo de nuevo");
+                }
+                grafo.AgregarUsuario(user);
+            }
+
+            if (grafo.CantidadUsuarios > 1)
+            {
+                grafo.GenerarConexiones();
+                grafo.MostrarGrafos();
+
+                WriteLine("\nDFS");
+                grafo.DFS(0);
+
+                WriteLine("\nBFS");
+                grafo.BFS(0);
+            }
+            else
+            {
+                WriteLine("No hay suficientes usuarios para crear conexiones.");
+            }
+        }
+    }
 }
-else
-{
-    WriteLine("No hay suficientes usuarios para crear conexiones.");
-}
-}
-}
-}
-}
-    
+
+
+
+
+
+
+
