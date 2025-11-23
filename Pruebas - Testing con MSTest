@@ -109,6 +109,9 @@ namespace Prueba_de_proyecto
             grafo.AgregarUsuario(ana);
             grafo.AgregarUsuario(marta);
             grafo.GenerarConexiones();
+
+            var visitados = grafo.BFS_Test(0); 
+            Assert.AreEqual(3, visitados.Count);
         }
 
         [TestMethod]
