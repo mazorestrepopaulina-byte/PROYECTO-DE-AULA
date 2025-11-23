@@ -13,9 +13,13 @@ namespace Proyecto_Estructura
     //complejidad O(1)
     public Usuario(string nombre)
     {
+      if (string.IsNullOrWhiteSpace(nombre))
+        throw new ArgumentException("El nombre no debe estar vacío");
+
       Nombre = nombre;
       Intereses = new LinkedList<string>();
     }
+
     //complejidad O(n)
     //Se agrega un interés al usuario si no está repetido ni vacio
     public void AgregarIntereses(string interes)
@@ -66,34 +70,150 @@ private int ContarInteresesRecursivo(LinkedListNode<string> nodo)
 
     }
 }
+
+public class GrafosUsuarios
+{
+    private List<List<int>> adyacencia;
+    private List<Usuario> usuarios;
+     
+    /* Se inicializa el grafo vacío
+    * complejidad O(1) */
+
+        public GrafosUsuarios()
+        {
+            usuarios = new List<Usuario>();
+            adyacencia = new List<List<int>>();
+        }
+
+        /* Agrega un nuevo usuario al grafo
+         * complejidad O(n) */
+        public void AgregarUsuario(Usuario usuar)
+        {
+            foreach (var existente in usuarios)
+            {
+                if (existente.Nombre.Equals(usuar.Nombre, StringComparison.OrdinalIgnoreCase))
+                {
+                    WriteLine($"\n El usuario '{usuar.Nombre}' ya existe");
+                    return; // sale del método sin agregar
+                }
+            }
+
+            usuarios.Add(usuar);
+            adyacencia.Add(new List<int>());
+            WriteLine($"\nUsuario '{usuar.Nombre}' agregado correctamente");
+        }
+
+        /* Genera conexiones entre usuarios que tienen intereses comunes
+         * complejidad O(n^2 * m) */
+        public void GenerarConexiones()
+        {
+            for (int i = 0; i < usuarios.Count; i++)
+            {
+                for (int j = i + 1; j < usuarios.Count; j++)
+                {
+                    foreach (var intereses in usuarios[i].Intereses)
+                    {
+                        if (usuarios[j].Intereses.Contains(intereses))
+                        {
+                            adyacencia[i].Add(j);
+                            adyacencia[j].Add(i);
+                            WriteLine($"Conexión creada entre {usuarios[i].Nombre} y {usuarios[j].Nombre} por interés en común '{intereses}'");
+                        }
+
+                    }
+                }
+            }
+        }
+
+       /* Recorre el grafo con DFS
+        * complejidad : O(V+E) */
+        public void DFS(int i, int[] visitados = null)
+        {
+            if (visitados == null)
+                visitados = new int[usuarios.Count];
+
+            if (visitados[i] == 1)
+                return;
+
+            visitados[i] = 1;
+            WriteLine($"Visitando a {usuarios[i].Nombre}");
+
+            foreach (int j in adyacencia[i])
+            {
+                if (visitados[j] == 0)
+                    DFS(j, visitados);
+            }
+        }
+        /*Recorre el grafo con BFS
+         * complejidad: O(V+E) */
+        public void BFS(int i)
+        {
+            int[] visitados = new int[usuarios.Count];
+            Queue<int> cola = new Queue<int>();
+
+            cola.Enqueue(i);
+            visitados[i] = 1;
+
+            while (cola.Count > 0)
+            {
+                int actual = cola.Dequeue();
+                WriteLine($"Visitando a {usuarios[actual].Nombre}");
+
+                foreach (int j in adyacencia[actual])
+                {
+                    if (visitados[j] == 0)
+                    {
+                        visitados[j] = 1;
+                        cola.Enqueue(j);
+                    }
+                }
+            }
+            
+        }
+
+        /* Muestras las conexiones del grafo
+         * complejidad O(n^2) */
+
+        public void MostrarGrafos()
+        {
+            WriteLine("\nConexiones entre usuarios: ");
+            for (int i = 0; i < usuarios.Count; i++)
+            {
+                string conexiones = adyacencia[i].Count == 0 ? "Ninguna conexión"
+                    : string.Join(", ", adyacencia[i].ConvertAll(j => usuarios[j].Nombre));
+                WriteLine($"{usuarios[i].Nombre} está conectado con: {conexiones}");
+            }
+
+        }
+        public int CantidadUsuarios => usuarios.Count;
+    }
+
 class Program
 {
   static void Main()
 {
   List<string> listaIntereses = new List<string>()
 {
-  "Música",
-  "Deporte",
-  "Libros",
-  "Películas",
-  "Series",
-  "Lugares",
-  "Tecnología",
-  "Arte",
-  "Comida",
-  "Paises",
-  "Idiomas",
-  "Fotografia",
-  "Videojuegos",
-  "Moda",
-  "Historia",
+   "Música","Deporte","Libros","Películas","Series","Lugares","Tecnología",
+ "Arte","Comida","Paises","Idiomas","Fotografia","Videojuegos","Moda","Historia",
 };
   WriteLine("Bienvenid@ al sistema de intereses comunes");
+  GrafosUsuarios grafo = new GrafosUsuarios();
+
+  while(true)
+{
   WriteLine("Ingrese su nombre de usuario");
   string nombre = ReadLine();
+  if (nombre.ToLower() == "*") break;
   
-  Usuario user = new Usuario(nombre);
-
+  Usuario user;
+  try{
+    user = new Usuario(nombre);
+  }
+  catch (Exception ex)
+  { Console.WriteLine($"Intente de nuevo {ex.Message}");
+    continue;
+  }
   WriteLine("Elige tus intereses favoritos");
   for (int i = 0; i < listaIntereses.Count; i++)
 {
@@ -101,11 +221,18 @@ class Program
 }
 while(true)
 {
-  WriteLine("Ingrese un número o 0 para salir");
-  int opcion = ToInt32(ReadLine());
+    WriteLine("Ingrese un número o 0 para salir");
+    int opcion;
+    try{
+      opcion = ToInt32(ReadLine());
+    }
+    catch
+    {
+        WriteLine("Debes ingresar un número");
+        continue;
+    }
 
-  if (opcion==0)
-    break;
+  if (opcion==0) break;
   if (opcion > 0 && opcion <= listaIntereses.Count)
 {
     string interesesSeleccionado = listaIntereses[opcion-1];
@@ -122,16 +249,26 @@ while(true)
 else
 {
     WriteLine("Número invalido. Inténtalo de nuevo");
+    }
+    grafo.AgregarUsuario(user);
+}
+if (grafo.CantidadUsuarios > 1)
+{
+    grafo.GenerarConexiones();
+    grafo.MostrarGrafos();
+
+    WriteLine("\nDFS");
+    grafo.DFS(0);
+
+    WriteLine("\nBFS");
+    grafo.BFS(0);
+}
+else
+{
+    WriteLine("No hay suficientes usuarios para crear conexiones.");
 }
 }
-user.MostrarIntereses();
 }
 }
 }
-
-
-
-  
-
-
     
